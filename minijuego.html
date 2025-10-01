@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Juego 2 Jugadores - Preguntas Humanidades</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+<style>
+  body{margin:0;background:linear-gradient(#111827,#071029);font-family:Inter,system-ui,Arial;color:#e6eef8}
+  #gameContainer{display:flex;justify-content:center;padding:18px}
+  canvas{border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+  /* HUD superior */
+  .hud{
+    position: absolute;
+    left:50%;
+    transform: translateX(-50%);
+    top:8px;
+    display:flex;
+    gap:12px;
+    z-index:20;
+    font-weight:700;
+  }
+  .pill{background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.03)}
+  /* Modal preguntas */
+  #questionModal{
+    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,92vw);z-index:50;
+    background:linear-gradient(180deg, rgba(8,10,20,0.98), rgba(6,8,18,0.98));box-shadow:0 12px 40px rgba(0,0,0,0.7);
+    border-radius:12px;padding:18px;display:none;color:#e6eef8;border:1px solid rgba(255,255,255,0.04)
+  }
+  #questionModal h3{margin:0 0 8px 0;font-size:18px}
+  #questionModal p{margin:0 0 14px 0;color:#bcd3ff}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .optBtn{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-weight:800;
+  }
+  .optBtn:hover{transform:translateY(-3px)}
+  #closeInfo{position:fixed;right:14px;top:14px;color:#bcd3ff;font-size:13px;z-index:30}
+  .small{font-size:13px;color:#cfd4dd}
+  footer{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;color:#9fb4d8;font-size:13px}
+</style>
+</head>
+<body>
+  <div id="closeInfo" class="small">Jugador1: Flechas; Jugador2: W/A/D (W saltar)</div>
+  <div class="hud" aria-hidden="false">
+    <div class="pill">Jugador 1: <span id="score1">0</span> pts</div>
+    <div class="pill">Jugador 2: <span id="score2">0</span> pts</div>
+    <div class="pill" id="chestsLeft">Cofres: 0</div>
+  </div>
+
+  <div id="gameContainer"></div>
+
+  <!-- Modal de pregunta -->
+  <div id="questionModal" role="dialog" aria-modal="true" aria-label="Pregunta de Humanidades">
+    <h3 id="qm_player">Jugador</h3>
+    <p id="qm_question">¿Pregunta?</p>
+    <div class="options" id="qm_options">
+      <!-- botones A-D -->
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+      <div class="small">Respuesta correcta: <span id="qm_feedback" style="font-weight:800"></span></div>
+      <button id="qm_close" style="background:#c0c5cc;border:none;padding:8px 12px;border-radius:8px;color:white;cursor:pointer">Continuar</button>
+    </div>
+  </div>
+
+  <footer>Bonificación: +10 pts correcto — -5 pts incorrecto. Preguntas: Humanidades / Español — múltiples opciones.</footer>
+
+<script>
+// -----------------------------
+// Preguntas (editable fácilmente)
+// cada pregunta: {q, options:[...], answer: index (0..3), topic }
+// -----------------------------
+const QUESTIONS = [
+  {
+    q: "¿Cuál es la función principal de un texto argumentativo?",
+    options: [
+      "Informar hechos sin opinión",
+      "Persuadir o convencer al lector",
+      "Relatar eventos cronológicos",
+      "Describir detalles sensoriales"
+    ],
+    answer: 1,
+    topic: "Humanidades - Lenguaje"
+  },
+  {
+    q: "¿Cuál de las siguientes es una figura retórica que consiste en usar exageración?",
+    options: ["Metáfora","Hipérbole","Metonimia","Eufemismo"],
+    answer: 1,
+    topic: "Humanidades - Literatura"
+  },
+  {
+    q: "¿Cuál es la función de la tilde en una palabra aguda terminada en 'n'?",
+    options: [
+      "Se usa siempre",
+      "No se usa cuando la palabra acaba en 'n'",
+      "Se usa si la palabra no termina en vocal",
+      "No corresponde: las agudas en 'n' llevan tilde si tienen acento prosódico"
+    ],
+    answer: 3,
+    topic: "Español - Ortografía"
+  },
+  {
+    q: "Selecciona la oración con complemento directo:",
+    options: [
+      "María corre rápido.",
+      "Pedro come una manzana.",
+      "El sol brilla intensamente.",
+      "Llegaron temprano al cine."
+    ],
+    answer: 1,
+    topic: "Español - Gramática"
+  },
+  {
+    q: "¿Qué elemento caracteriza al cuento como género literario?",
+    options: [
+      "Extensión muy larga y muchos personajes",
+      "Prosa breve y unidad de efecto",
+      "Uso exclusivo de verso",
+      "Ausencia de conflicto"
+    ],
+    answer: 1,
+    topic: "Humanidades - Literatura"
+  }
+];
+
+// -----------------------------
+// Configuración Phaser
+// -----------------------------
+const config = {
+  type: Phaser.AUTO,
+  width: 960,
+  height: 540,
+  parent: 'gameContainer',
+  backgroundColor: '#79a7ff',
+  physics: {
+    default: 'arcade',
+    arcade: { gravity: { y: 1000 }, debug: false }
+  },
+  scene: {
+    preload: preload,
+    create: create,
+    update: update
+  }
+};
+
+const game = new Phaser.Game(config);
+
+// Variables del juego globales
+let player1, player2;
+let cursors;
+let keysWASD;
+let platforms;
+let chestsGroup;
+let score1 = 0, score2 = 0;
+let chestsTotal = 0;
+let chestQuestionMap = {}; // chest.id -> question index
+let modal = document.getElementById('questionModal');
+let qm_player = document.getElementById('qm_player');
+let qm_question = document.getElementById('qm_question');
+let qm_options = document.getElementById('qm_options');
+let qm_feedback = document.getElementById('qm_feedback');
+let qm_close = document.getElementById('qm_close');
+
+function preload() {
+  // No assets externos. Creamos texturas básicas con gráficos.
+  this.load.image('ground', createBase64Rect(200, 32, '#6b4f2a'));
+  this.load.image('platform', createBase64Rect(120, 24, '#8b5e3c'));
+  this.load.image('chest', createChestSprite());
+  // crear sprites de jugador (dos colores)
+  this.load.image('player1', createBase64Rect(36, 48, '#ffd166'));
+  this.load.image('player2', createBase64Rect(36, 48, '#6ef0b7'));
+  // simple coin icon if needed
+  this.load.image('coin', createBase64Rect(18,18,'#ffd700'));
+
+  // small sound (optional)
+  // no sound files to keep local
+}
+
+function create() {
+  const scene = this;
+
+  // Fondo simple (cielo + montañas)
+  const graphics = this.add.graphics();
+  graphics.fillStyle(0x87ceeb, 1);
+  graphics.fillRect(0, 0, config.width, config.height);
+  // simple ground gradient drawn as tiles later
+
+  // Platforms static group
+  platforms = this.physics.add.staticGroup();
+  // ground
+  platforms.create(480, 520, 'ground').setScale(5,1).refreshBody();
+
+  // some platforms
+  platforms.create(200, 420, 'platform');
+  platforms.create(760, 360, 'platform');
+  platforms.create(480, 300, 'platform');
+  platforms.create(110, 250, 'platform');
+  platforms.create(860, 220, 'platform');
+
+  // players
+  player1 = this.physics.add.sprite(120, 460, 'player1').setScale(1).setBounce(0.05).setCollideWorldBounds(true);
+  player2 = this.physics.add.sprite(200, 460, 'player2').setScale(1).setBounce(0.05).setCollideWorldBounds(true);
+
+  // sizes / body
+  player1.body.setSize(36,48);
+  player2.body.setSize(36,48);
+
+  // collisions player <-> platforms
+  this.physics.add.collider(player1, platforms);
+  this.physics.add.collider(player2, platforms);
+
+  // cursors & WASD
+  cursors = this.input.keyboard.createCursorKeys();
+  keysWASD = this.input.keyboard.addKeys({ up: Phaser.Input.Keyboard.KeyCodes.W, left: Phaser.Input.Keyboard.KeyCodes.A, right: Phaser.Input.Keyboard.KeyCodes.D });
+
+  // chests group
+  chestsGroup = this.physics.add.staticGroup();
+  // colocamos cofres en varias posiciones y asignamos preguntas
+  const chestPositions = [
+    {x: 400, y: 460},
+    {x: 760, y: 320},
+    {x: 480, y: 260},
+    {x: 110, y: 210},
+    {x: 860, y: 180}
+  ];
+
+  // si hay más cofres que preguntas, se repetirán aleatoriamente
+  chestsTotal = chestPositions.length;
+  chestPositions.forEach((pos, idx) => {
+    const ch = chestsGroup.create(pos.x, pos.y, 'chest').setScale(0.85).refreshBody();
+    // asignar un id y una pregunta al cofre
+    const qIndex = Phaser.Math.Between(0, QUESTIONS.length - 1);
+    chestQuestionMap[ch.body.gameObject.name || ch.body.gameObject.texture.key + '_' + idx] = qIndex;
+    // store mapping on sprite too
+    ch.questionIndex = qIndex;
+    ch.collected = false;
+  });
+
+  // overlap players with chests -> abrir pregunta
+  this.physics.add.overlap(player1, chestsGroup, (p, chest) => onChestTouched(scene, chest, 1), null, this);
+  this.physics.add.overlap(player2, chestsGroup, (p, chest) => onChestTouched(scene, chest, 2), null, this);
+
+  // world bounds
+  this.physics.world.setBounds(0, 0, config.width, config.height);
+
+  // camera follow middle point between players
+  this.cameras.main.setBounds(0, 0, config.width, config.height);
+
+  // Input pointer: allow clicking option with mouse
+  qm_close.addEventListener('click', () => { hideModal(); });
+
+  updateScoresHUD();
+}
+
+// simple helper to generate a base64 rectangle as a texture key
+function createBase64Rect(w, h, color){
+  // create canvas
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = color;
+  // rounded rect
+  roundRectCtx(ctx, 0, 0, w, h, 8);
+  ctx.fill();
+  // stroke
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  return c.toDataURL();
+}
+
+// Creates a chest drawing on canvas and returns base64 URL
+function createChestSprite(){
+  const w = 48, h = 34;
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  // base
+  ctx.fillStyle = '#8b4513';
+  roundRectCtx(ctx, 2, 10, w-4, h-12, 6);
+  ctx.fillStyle = '#d1a354';
+  roundRectCtx(ctx, 2, 6, w-4, 8, 6);
+  ctx.fill();
+  // lock
+  ctx.fillStyle = '#4b2e14';
+  ctx.fillRect(w/2-4, 16, 8, 10);
+  ctx.beginPath();
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.arc(w/2, 18, 2, 0, Math.PI*2);
+  ctx.fill();
+  return c.toDataURL();
+}
+
+function roundRectCtx(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+// -----------------------------
+// Lógica al tocar un cofre
+// -----------------------------
+let waitingForAnswer = false;
+let currentQuestion = null;
+let currentPlayer = null;
+let currentChest = null;
+
+function onChestTouched(scene, chest, playerNumber){
+  if(waitingForAnswer) return;
+  if(chest.collected) return;
+  waitingForAnswer = true;
+  currentChest = chest;
+  currentPlayer = playerNumber;
+  currentQuestion = QUESTIONS[chest.questionIndex];
+
+  // pausa física
+  scene.physics.world.pause();
+  // mostrar modal con pregunta
+  showQuestionModal(playerNumber, currentQuestion);
+}
+
+function showQuestionModal(playerNumber, questionObj){
+  qm_player.textContent = `Jugador ${playerNumber} responde`;
+  qm_question.textContent = questionObj.q;
+  qm_feedback.textContent = questionObj.topic || '';
+  qm_options.innerHTML = '';
+
+  // crear botones A B C D
+  questionObj.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'optBtn';
+    btn.innerHTML = `<strong>${String.fromCharCode(65+i)}</strong>. ${opt}`;
+    btn.onclick = () => handleAnswer(i);
+    qm_options.appendChild(btn);
+  });
+
+  modal.style.display = 'block';
+  // focus first button for keyboard accessibility
+  const firstBtn = qm_options.querySelector('button');
+  if(firstBtn) firstBtn.focus();
+}
+
+// manejar respuesta
+function handleAnswer(selectedIndex){
+  // validar
+  const correctIndex = currentQuestion.answer;
+  const isCorrect = (selectedIndex === correctIndex);
+
+  // actualizar puntaje segun jugador
+  if(currentPlayer === 1){
+    score1 += isCorrect ? 10 : -5;
+    if(score1 < 0) score1 = 0;
+  } else {
+    score2 += isCorrect ? 10 : -5;
+    if(score2 < 0) score2 = 0;
+  }
+  // marcar cofre como recogido y quitar del mapa
+  if(currentChest){
+    // play small animation: tint the chest then destroy
+    currentChest.collected = true;
+    currentChest.setTint(isCorrect ? 0x7CFC00 : 0xFF6B6B);
+    // quitar phys after unpause
+  }
+
+  // mostrar retroalimentación breve en modal
+  qm_question.textContent = isCorrect ? '¡Correcto!' : 'Respuesta incorrecta';
+  qm_options.innerHTML = `<div style="padding:10px;font-weight:800">${isCorrect ? '+10 puntos' : '-5 puntos'}</div>`;
+
+  updateScoresHUD();
+
+  // esperar 900ms y cerrar modal
+  setTimeout(()=> {
+    hideModal();
+    // eliminar cofre del grupo
+    if(currentChest){
+      currentChest.destroy();
+      currentChest = null;
+    }
+    waitingForAnswer = false;
+  }, 900);
+}
+
+function hideModal(){
+  modal.style.display = 'none';
+  // reanudar física
+  game.scene.scenes[0].physics.world.resume();
+  // check chests left
+  chestsTotal = chestsGroup.getChildren().filter(c=>!c.collected).length;
+  document.getElementById('chestsLeft').textContent = `Cofres: ${chestsTotal}`;
+  // final: si no quedan cofres -> mostrar ganador
+  if(chestsTotal === 0){
+    setTimeout(showFinalWinner, 300);
+  }
+}
+
+function updateScoresHUD(){
+  document.getElementById('score1').textContent = score1;
+  document.getElementById('score2').textContent = score2;
+  chestsTotal = chestsGroup.getChildren().filter(c=>!c.collected).length;
+  document.getElementById('chestsLeft').textContent = `Cofres: ${chestsTotal}`;
+}
+
+// -----------------------------
+// Update / Controls
+// -----------------------------
+function update(){
+  const scene = game.scene.scenes[0]; // current scene
+  if(!scene) return;
+
+  // Player 1 controls (Flechas)
+  const speed = 220;
+  if(cursors.left.isDown){
+    player1.setVelocityX(-speed);
+  } else if(cursors.right.isDown){
+    player1.setVelocityX(speed);
+  } else {
+    player1.setVelocityX(0);
+  }
+  if(cursors.up.isDown && player1.body.touching.down){
+    player1.setVelocityY(-420);
+  }
+
+  // Player 2 controls (W A D)
+  if(keysWASD.left.isDown){
+    player2.setVelocityX(-speed);
+  } else if(keysWASD.right.isDown){
+    player2.setVelocityX(speed);
+  } else {
+    player2.setVelocityX(0);
+  }
+  if(keysWASD.up.isDown && player2.body.touching.down){
+    player2.setVelocityY(-420);
+  }
+
+  // limit players inside world
+  player1.x = Phaser.Math.Clamp(player1.x, 16, config.width - 16);
+  player2.x = Phaser.Math.Clamp(player2.x, 16, config.width - 16);
+
+  // small camera follow average position
+  const midX = (player1.x + player2.x) / 2;
+  const cam = scene.cameras.main;
+  cam.centerOn(Phaser.Math.Clamp(midX, config.width/2, config.width/2), config.height/2);
+
+  // update HUD frequently
+  updateScoresHUD();
+}
+
+// Mostrar ganador final
+function showFinalWinner(){
+  const winnerText = score1 > score2 ? `¡Gana Jugador 1 (${score1} pts)!` : (score2 > score1 ? `¡Gana Jugador 2 (${score2} pts)!` : `Empate (${score1} - ${score2})`);
+  alert(`Juego terminado. ${winnerText}`);
+  // reiniciar la página para jugar de nuevo
+  window.location.reload();
+}
+
+// Prevent accidental keyboard scrolling
+window.addEventListener('keydown', (e) => {
+  if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].indexOf(e.code) > -1) {
+    e.preventDefault();
+  }
+});
+
+</script>
+</body>
+</html>
+
+
+
