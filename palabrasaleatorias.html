@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🎤 Freestyle Deluxe</title>
+  <style>
+    :root {
+      --bg1: #070b16;
+      --card: #101729;
+      --accent: #ff3366;
+      --accent2: #00ffd5;
+      --muted: #bfc8d6;
+      --panel: #0b1220;
+    }
+    *{box-sizing:border-box}
+    body {
+      margin:0;
+      min-height:100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: radial-gradient(circle at top, #0e1730 0%, #070b16 100%);
+      color:#e6eef7;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .app {
+      width:100%;
+      max-width:960px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      border-radius:16px;
+      padding:24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    header {
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+    header h1 {
+      margin:0;
+      font-size:22px;
+      color:var(--accent);
+      letter-spacing:0.6px;
+    }
+    .panel {
+      background: rgba(255,255,255,0.03);
+      padding:18px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.06);
+      margin-bottom:18px;
+    }
+    .word-box {
+      text-align:center;
+      padding:30px 20px;
+      border-radius:12px;
+      background: linear-gradient(145deg, rgba(0,0,0,0.25), rgba(255,255,255,0.03));
+      margin-top:18px;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.3);
+    }
+    .word {
+      font-size:52px;
+      font-weight:700;
+      letter-spacing:1px;
+      color:var(--accent2);
+      margin:8px 0;
+    }
+    .hint {
+      font-size:15px;
+      color:var(--muted);
+    }
+    button {
+      background: linear-gradient(90deg,var(--accent), #ff6a8a);
+      color:white;
+      border:0;
+      padding:10px 16px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow: 0 6px 18px rgba(255, 51, 102, 0.25);
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(255, 51, 102, 0.35);
+    }
+    .btn-ghost {
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);
+      font-weight:600;
+    }
+    .row {display:flex;gap:10px;align-items:center}
+    .timer {
+      font-size:34px;
+      font-weight:700;
+      color:#ffd54a;
+    }
+    .small {font-size:13px;color:var(--muted)}
+    footer {
+      margin-top:18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center
+    }
+    .bpm-indicator {font-weight:700;color:#9be6ff}
+    .checkbox-row {
+      display:flex;gap:10px;margin-top:6px;align-items:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>🎤 Freestyle Deluxe</h1>
+      <div class="small">Estado Beat: <span id="beatState">Detenido</span></div>
+    </header>
+
+    <div class="panel">
+      <label>Duración total (segundos)</label>
+      <input id="duration" type="number" min="10" value="60" style="width:90px">
+      <label style="margin-left:20px">Cambio de palabra (seg)</label>
+      <input id="wordInterval" type="number" min="3" value="8" style="width:90px">
+      <label style="margin-left:20px">BPM</label>
+      <input id="bpm" type="number" min="60" max="160" value="90" style="width:90px">
+    </div>
+
+    <div class="word-box">
+      <div class="hint">Palabra actual</div>
+      <div id="word" class="word">Pulsa ▶ Iniciar</div>
+      <div class="small">Palabras usadas: <span id="usedCount">0</span></div>
+      <div id="timer" class="timer">0s</div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <button id="btnStart">▶ Iniciar</button>
+      <button id="btnStop" class="btn-ghost">■ Detener</button>
+      <button id="btnNew" class="btn-ghost">🎲 Nueva palabra</button>
+      <button id="btnShuffle" class="btn-ghost">🔀 Barajar</button>
+    </div>
+
+    <div class="panel">
+      <div class="small"><b>Instrumentos activos</b></div>
+      <div class="checkbox-row"><input type="checkbox" id="kick" checked>Kick</div>
+      <div class="checkbox-row"><input type="checkbox" id="snare" checked>Snare</div>
+      <div class="checkbox-row"><input type="checkbox" id="hat" checked>Hi-Hat</div>
+      <div class="checkbox-row"><input type="checkbox" id="clap">Clap</div>
+      <div class="checkbox-row"><input type="checkbox" id="bass">Bassline</div>
+    </div>
+
+    <footer>
+      <div class="small">Pulsa espacio para palabra nueva</div>
+      <div class="bpm-indicator">BPM: <span id="bpmRead">90</span></div>
+    </footer>
+  </div>
+
+  <script>
+    const wordEl = document.getElementById('word');
+    const timerEl = document.getElementById('timer');
+    const usedCountEl = document.getElementById('usedCount');
+    const beatState = document.getElementById('beatState');
+    const bpmInput = document.getElementById('bpm');
+    const bpmRead = document.getElementById('bpmRead');
+
+    const wordList = ["micro","rap","escenario","batalla","flow","calle","verso","ritmo","beat","sonido","barras","improvisar","cultura","hermano","ciudad","victoria","coraje","fuerza","respeto","libertad"];
+    let usedWords = new Set();
+
+    // Random word
+    function pickWord(){
+      if(usedWords.size === wordList.length) usedWords.clear();
+      let w;
+      do { w = wordList[Math.floor(Math.random()*wordList.length)] } while(usedWords.has(w));
+      usedWords.add(w);
+      usedCountEl.textContent = usedWords.size;
+      return w;
+    }
+
+    document.getElementById('btnNew').onclick = ()=> wordEl.textContent = pickWord();
+    document.getElementById('btnShuffle').onclick = ()=> wordList.sort(()=>Math.random()-0.5);
+
+    // Timer
+    let mainTimer, wordTimer;
+    function startGame(){
+      clearInterval(mainTimer);
+      clearInterval(wordTimer);
+      let total = parseInt(document.getElementById('duration').value)||60;
+      const interval = parseInt(document.getElementById('wordInterval').value)||8;
+      wordEl.textContent = pickWord();
+      timerEl.textContent = total+'s';
+      startBeat();
+
+      mainTimer = setInterval(()=>{
+        total--;
+        timerEl.textContent = total+'s';
+        if(total<=0){
+          clearInterval(mainTimer);
+          clearInterval(wordTimer);
+          timerEl.textContent = "⏱ ¡Tiempo!";
+          stopBeat();
+        }
+      },1000);
+
+      wordTimer = setInterval(()=> wordEl.textContent = pickWord(), interval*1000);
+    }
+    document.getElementById('btnStart').onclick = startGame;
+    document.getElementById('btnStop').onclick = ()=>{ stopBeat(); clearInterval(mainTimer); clearInterval(wordTimer); timerEl.textContent="Detenido"; };
+
+    // ===== Beat con más instrumentos =====
+    let ac, isPlaying=false, beatInterval;
+    function startBeat(){
+      if(isPlaying) return;
+      if(!ac) ac = new (window.AudioContext||window.webkitAudioContext)();
+      isPlaying = true;
+      beatState.textContent = "Reproduciendo";
+      scheduleBeat();
+    }
+    function stopBeat(){
+      isPlaying=false;
+      beatState.textContent="Detenido";
+      if(beatInterval) clearInterval(beatInterval);
+    }
+    function scheduleBeat(){
+      const bpm = parseInt(bpmInput.value)||90;
+      bpmRead.textContent = bpm;
+      const beatDur = 60000/bpm;
+      if(beatInterval) clearInterval(beatInterval);
+      let count=0;
+      beatInterval = setInterval(()=>{
+        if(document.getElementById('kick').checked) playKick();
+        if(document.getElementById('snare').checked && count%2===1) playSnare();
+        if(document.getElementById('clap').checked && count%4===3) playClap();
+        if(document.getElementById('bass').checked) playBass();
+        if(document.getElementById('hat').checked){
+          playHat();
+          setTimeout(playHat, beatDur/2);
+        }
+        count++;
+      }, beatDur);
+    }
+
+    // sonidos
+    function playKick(){
+      const o=ac.createOscillator(), g=ac.createGain(), now=ac.currentTime;
+      o.type='sine'; o.frequency.setValueAtTime(150,now); o.frequency.exponentialRampToValueAtTime(40,now+0.15);
+      g.gain.setValueAtTime(1,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.5);
+      o.connect(g); g.connect(ac.destination); o.start(); o.stop(now+0.5);
+    }
+    function playSnare(){
+      const buffer=ac.createBuffer(1,ac.sampleRate*0.2,ac.sampleRate),data=buffer.getChannelData(0);
+      for(let i=0;i<data.length;i++){ data[i]=Math.random()*2-1; }
+      const noise=ac.createBufferSource(); noise.buffer=buffer;
+      const filter=ac.createBiquadFilter(); filter.type='bandpass'; filter.frequency.value=1800;
+      const g=ac.createGain(); g.gain.setValueAtTime(1,ac.currentTime); g.gain.exponentialRampToValueAtTime(0.01,ac.currentTime+0.2);
+      noise.connect(filter); filter.connect(g); g.connect(ac.destination);
+      noise.start(); noise.stop(ac.currentTime+0.2);
+    }
+    function playHat(){
+      const buffer=ac.createBuffer(1,ac.sampleRate*0.05,ac.sampleRate),data=buffer.getChannelData(0);
+      for(let i=0;i<data.length;i++){ data[i]=Math.random()*2-1; }
+      const noise=ac.createBufferSource(); noise.buffer=buffer;
+      const filter=ac.createBiquadFilter(); filter.type='highpass'; filter.frequency.value=7000;
+      const g=ac.createGain(); g.gain.setValueAtTime(0.6,ac.currentTime); g.gain.exponentialRampToValueAtTime(0.01,ac.currentTime+0.05);
+      noise.connect(filter); filter.connect(g); g.connect(ac.destination);
+      noise.start(); noise.stop(ac.currentTime+0.05);
+    }
+    function playClap(){
+      playSnare(); // clap = snare más corto + reverb simple
+    }
+    function playBass(){
+      const o=ac.createOscillator(), g=ac.createGain(), now=ac.currentTime;
+      o.type='sawtooth'; o.frequency.setValueAtTime(55,now);
+      g.gain.setValueAtTime(0.4,now); g.gain.exponentialRampToValueAtTime(0.01,now+0.4);
+      o.connect(g); g.connect(ac.destination); o.start(); o.stop(now+0.4);
+    }
+
+    bpmInput.addEventListener('change', ()=>{ if(isPlaying) scheduleBeat(); });
+    window.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); wordEl.textContent=pickWord(); }});
+  </script>
+</body>
+</html>

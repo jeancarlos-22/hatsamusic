@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Letrista - Aprende Jugando</title>
+  <style>
+    /* ===== Variables de color ===== */
+    :root {
+      --bg: #0b0f1a;
+      --card: #101729;
+      --accent: #ff3366;
+      --accent2: #ff8c42;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --glass: rgba(255, 255, 255, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg), #1a2238 90%);
+      color: var(--text);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ===== ESPACIOS PARA PUBLICIDAD ===== */
+    .ad-space {
+      background: #222;
+      color: #aaa;
+      text-align: center;
+      padding: 15px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border: 1px dashed #444;
+    }
+
+    /* ===== Layout principal con laterales ===== */
+    .main-layout {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+      max-width: 1200px;
+      margin: 20px 0;
+    }
+
+    .side-ads {
+      flex: 1;
+      max-width: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .container {
+      flex: 3;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    /* ===== Botones ===== */
+    .btn-group {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .btn {
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: var(--glass);
+      color: var(--text);
+      font-size: 16px;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ===== Responsive ===== */
+    @media(max-width: 900px) {
+      .main-layout {
+        flex-direction: column;
+        align-items: center;
+      }
+      .side-ads {
+        flex-direction: row;
+        max-width: none;
+        width: 100%;
+        justify-content: space-around;
+      }
+      .side-ads .ad-space {
+        flex: 1;
+      }
+    }
+
+    @media(max-width: 600px) {
+      .btn-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ESPACIO PUBLICIDAD ARRIBA -->
+  <div class="ad-space">🅿️ Espacio publicitario superior</div>
+
+  <!-- Layout principal con publicidad lateral -->
+  <div class="main-layout">
+    <!-- Lado izquierdo -->
+    <div class="side-ads">
+      <div class="ad-space">🅿️ Publicidad izquierda 1</div>
+      <div class="ad-space">🅿️ Publicidad izquierda 2</div>
+    </div>
+
+    <!-- Contenido central -->
+    <div class="container">
+      <h1>www.letrista.com</h1>
+      <p>La página donde aprenderás a hablar correctamente</p>
+
+      <h2 style="margin:20px 0;">¿Y hoy con qué modo quieres aprender?</h2>
+
+      <div class="btn-group">
+        
+        <a href="palabrasaleatorias.html" target="_blank" class="btn">
+        🎲 Palabras aleatorias</a>
+
+
+        <button class="btn">🔤 Empieza o termina con</button>
+        <button class="btn">🎮 Minijuegos ABC</button>
+        <button class="btn">🎵 Música que enseña</button>
+      </div>
+    </div>
+
+    <!-- Lado derecho -->
+    <div class="side-ads">
+      <div class="ad-space">🅿️ Publicidad derecha 1</div>
+      <div class="ad-space">🅿️ Publicidad derecha 2</div>
+    </div>
+  </div>
+
+  <!-- ESPACIOS PUBLICIDAD ABAJO -->
+  <div class="ad-space">🅿️ Espacio publicitario inferior 1</div>
+  <div class="ad-space">🅿️ Espacio publicitario inferior 2</div>
+
+  <footer>
+    © 2025 HACHO Multimedia. Todos los derechos reservados.
+  </footer>
+
+</body>
+</html>
