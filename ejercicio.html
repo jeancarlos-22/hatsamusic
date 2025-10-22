@@ -1,171 +1,641 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juegos Educativos</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Juegos Educativos — Ahorcado • Crucigrama • Dado</title>
 <style>
-    body {
-        font-family: "Arial", sans-serif;
-        background: linear-gradient(to bottom right, #f3f8ff, #dcecff);
-        text-align: center;
-        padding: 30px;
-        color: #333;
-    }
+  :root{
+    --bg:#f3f8ff;
+    --card:#ffffff;
+    --accent:#3fbf9b;
+    --accent-dark:#2fa282;
+    --muted:#6b7280;
+    --success:#16a34a;
+    --danger:#ef4444;
+    --glass: rgba(255,255,255,0.7);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:linear-gradient(135deg,var(--bg),#e9f6f3 60%);
+    color:#0f172a;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:20px;
+  }
 
-    h1 {
-        color: #007bff;
-        margin-bottom: 20px;
-    }
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1100px;margin:0 auto 20px}
+  header h1{font-size:1.3rem;margin:0;color:var(--accent-dark)}
+  header p{margin:0;color:var(--muted);font-size:0.95rem}
 
-    h2 {
-        margin-top: 40px;
-        color: #0056b3;
-    }
+  .layout{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:320px 1fr;gap:20px}
+  @media (max-width:880px){.layout{grid-template-columns:1fr}}
 
-    #ahorcado, #dado {
-        margin-top: 20px;
-        background: #fff;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        padding: 20px;
-        width: 90%;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
+  /* Sidebar menu */
+  .menu{
+    background:var(--card);
+    border-radius:12px;
+    padding:16px;
+    box-shadow:0 6px 18px rgba(15,23,42,0.08);
+  }
+  .menu h2{margin:0 0 12px 0;color:var(--accent)}
+  .menu button{
+    width:100%;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    padding:12px 14px;
+    background:linear-gradient(180deg,var(--glass),#fff);
+    border:1px solid rgba(15,23,42,0.06);
+    border-radius:10px;
+    cursor:pointer;
+    margin-bottom:10px;
+    font-weight:600;
+    color:#083344;
+    transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .menu button:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(11,22,33,0.06)}
+  .menu button.active{background:linear-gradient(180deg,var(--accent),var(--accent-dark));color:#fff;box-shadow:0 8px 20px rgba(63,191,155,0.18)}
 
-    #palabra {
-        font-size: 30px;
-        letter-spacing: 10px;
-        margin: 20px 0;
-    }
+  /* Content cards */
+  .card{
+    background:var(--card);
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,0.06);
+    margin-bottom:18px;
+  }
 
-    input {
-        padding: 10px;
-        font-size: 18px;
-        width: 60px;
-        text-align: center;
-    }
+  .game-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-    button {
-        margin-top: 15px;
-        padding: 10px 25px;
-        font-size: 16px;
-        border: none;
-        border-radius: 10px;
-        background: #007bff;
-        color: white;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
+  /* Ahorcado layout */
+  #ahorcadoCanvas{background:linear-gradient(180deg,#fff,#fbfffb);border-radius:10px;border:1px solid rgba(15,23,42,0.04)}
+  .hidden{display:none}
 
-    button:hover {
-        background: #0056b3;
-    }
+  .word{
+    font-size:1.6rem;
+    letter-spacing:10px;
+    font-weight:700;
+    text-align:center;
+    margin:14px 0;
+  }
 
-    #resultadoAhorcado, #pregunta, #respuesta {
-        margin-top: 20px;
-        font-weight: bold;
-    }
+  .keyboard{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .key{
+    width:36px;height:36px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;font-weight:700;color:#07323a;
+    transition:transform .08s ease;
+  }
+  .key:hover{transform:translateY(-3px)}
+  .key.disabled{opacity:.35;cursor:not-allowed;transform:none}
 
-    #dado img {
-        width: 100px;
-        margin: 15px;
-    }
+  .status{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:var(--muted)}
+  .status strong{color:#0b2b2e}
 
-    #pregunta {
-        font-size: 18px;
-        color: #333;
-        min-height: 50px;
-    }
+  /* Crucigrama */
+  .crossword-grid{display:grid;gap:2px;justify-content:center;margin:14px 0}
+  .cw-cell{width:40px;height:40px;background:#f7fafb;border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;border:1px solid rgba(2,6,23,0.05)}
+  .cw-cell input{width:100%;height:100%;border:none;text-align:center;font-weight:700;font-size:16px;background:transparent;outline:none}
+  .cw-cell.black{background:#0f172a;border-radius:6px}
+  .clues{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .clue{background:linear-gradient(180deg,#fff,#fbfffb);padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.04)}
+  .clue h4{margin:0 0 6px 0;font-size:0.95rem;color:var(--accent-dark)}
+
+  /* Dado */
+  .dice-area{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .dice{
+    width:110px;height:110px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:var(--accent-dark);
+    box-shadow:0 8px 20px rgba(11,22,33,0.06);
+    transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .dice.spin{transform:rotate(720deg) scale(1.05)}
+
+  /* Footer */
+  footer{text-align:center;color:var(--muted);margin-top:18px;font-size:0.9rem}
+  .muted{color:var(--muted)}
+
+  /* small screens */
+  @media (max-width:520px){
+    .cw-cell{width:34px;height:34px}
+    .word{font-size:1.3rem;letter-spacing:6px}
+  }
 </style>
 </head>
 <body>
 
-<h1>🎯 Juegos Educativos</h1>
+<header>
+  <div>
+    <h1>Juegos Educativos</h1>
+    <p class="muted">Ahorcado animado • Crucigrama dinámico • Dado con preguntas y sonido</p>
+  </div>
+  <div>
+    <p class="muted">Estilo: educativo, sonidos integrados, todo en una página</p>
+  </div>
+</header>
 
-<!-- 🧩 Ahorcado -->
-<div id="ahorcado">
-    <h2>Juego del Ahorcado 🪢</h2>
-    <p>Adivina la palabra relacionada con recursos educativos.</p>
-    <div id="palabra"></div>
-    <input type="text" id="letra" maxlength="1" placeholder="Letra">
-    <button onclick="adivinar()">Adivinar</button>
-    <p>Intentos restantes: <span id="intentos">6</span></p>
-    <p id="resultadoAhorcado"></p>
-</div>
+<div class="layout">
 
-<!-- 🎲 Dado de Preguntas -->
-<div id="dado">
-    <h2>Juego del Dado 🎲</h2>
-    <p>Tira el dado para responder una pregunta sobre educación.</p>
-    <img id="imagenDado" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Dice-1-b.svg" alt="dado">
-    <br>
-    <button onclick="tirarDado()">Tirar Dado</button>
-    <p id="pregunta"></p>
-    <p id="respuesta"></p>
+  <!-- Sidebar -->
+  <aside class="menu card" aria-label="Menú de juegos">
+    <h2>Selecciona un juego</h2>
+    <button id="btn-ahorcado" class="active" onclick="showGame('ahorcado')">🪢 Ahorcado</button>
+    <button id="btn-crucigrama" onclick="showGame('crucigrama')">🧩 Crucigrama</button>
+    <button id="btn-dado" onclick="showGame('dado')">🎲 Dado</button>
+
+    <div style="margin-top:14px">
+      <p style="margin:0 0 6px 0;color:var(--muted)"><strong>Consejos:</strong></p>
+      <ul style="margin:0;padding-left:18px;color:var(--muted)">
+        <li>Usa el teclado en Ahorcado o haz click en las teclas.</li>
+        <li>En Crucigrama escribe letras y presiona "Comprobar".</li>
+        <li>En Dado pulsa "Tirar dado" y responde la pregunta.</li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main>
+
+    <!-- Ahorcado -->
+    <section id="ahorcado" class="card">
+      <div class="game-header">
+        <div>
+          <h3 style="margin:0;color:var(--accent-dark)">Ahorcado — Recursos Educativos</h3>
+          <p class="muted" style="margin:6px 0 0">Adivina la palabra. Fallos permitidos: 6</p>
+        </div>
+        <div class="controls">
+          <button onclick="startAhorcado()">🔁 Nuevo</button>
+          <button onclick="hintLetter()">💡 Pista (-1 intento)</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;align-items:center">
+        <canvas id="ahorcadoCanvas" width="300" height="320" style="flex:0 0 300px"></canvas>
+        <div style="flex:1;min-width:220px">
+          <div id="palabraArea" class="word">_ _ _ _ _</div>
+          <div style="text-align:center;margin-top:8px">
+            <div class="keyboard" id="keyboard"></div>
+          </div>
+          <div class="status">
+            <div>Intentos: <strong id="intentos">6</strong></div>
+            <div id="msgAhorcado" style="color:var(--muted)"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Crucigrama -->
+    <section id="crucigrama" class="card hidden">
+      <div class="game-header">
+        <div>
+          <h3 style="margin:0;color:var(--accent-dark)">Crucigrama — Recursos Educativos</h3>
+          <p class="muted" style="margin:6px 0 0">Completa las palabras en la cuadrícula y comprueba tu solución.</p>
+        </div>
+        <div class="controls">
+          <button onclick="resetCrossword()">🔁 Reiniciar</button>
+          <button onclick="checkCrossword()">✅ Comprobar</button>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;margin-top:16px">
+        <div id="cwGrid" class="crossword-grid"></div>
+
+        <div class="clues" style="width:100%;max-width:720px">
+          <div class="clue">
+            <h4>Horizontales</h4>
+            <p>1. Recurso impreso para estudiar. (5 letras)</p>
+            <p>2. Medio audiovisual. (5 letras)</p>
+            <p>3. Plataforma virtual (9 letras)</p>
+          </div>
+          <div class="clue">
+            <h4>Verticales</h4>
+            <p>1. Persona que enseña. (6 letras)</p>
+            <p>2. Persona que aprende. (9 letras)</p>
+            <p>3. Tecnología para educar. (10 letras)</p>
+          </div>
+        </div>
+
+        <p style="margin-top:12px;color:var(--muted)">Escribe letras, usa mayúsculas o minúsculas — el sistema lo normaliza.</p>
+      </div>
+    </section>
+
+    <!-- Dado -->
+    <section id="dado" class="card hidden">
+      <div class="game-header">
+        <div>
+          <h3 style="margin:0;color:var(--accent-dark)">Dado de Preguntas</h3>
+          <p class="muted" style="margin:6px 0 0">Tira el dado y responde la pregunta relacionada.</p>
+        </div>
+        <div class="controls">
+          <button onclick="playDice()">🎲 Tirar dado</button>
+          <button onclick="playSound('click')">🔊 Test sonido</button>
+        </div>
+      </div>
+
+      <div class="dice-area" style="margin-top:16px">
+        <div id="diceBox" class="dice">1</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center">
+          <div style="min-width:280px;text-align:left">
+            <p style="margin:6px 0;color:var(--muted)"><strong>Pregunta:</strong></p>
+            <p id="diceQuestion" style="min-height:36px;font-weight:700"></p>
+            <p style="margin:8px 0 0;color:var(--muted)">Respuesta esperada (clic en mostrar para ver):</p>
+            <p id="diceAnswer" style="font-weight:700;color:var(--accent-dark)"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p class="muted">Hecho con ❤ — Prueba los tres juegos. Los sonidos usan Web Audio para no depender de ficheros externos.</p>
+    </footer>
+  </main>
 </div>
 
 <script>
-// ========================
-// 🎮 Ahorcado
-// ========================
-const palabras = ["LIBRO", "VIDEO", "PLATAFORMA", "DOCENTE", "APRENDIZAJE", "TECNOLOGIA"];
-let palabraSecreta = palabras[Math.floor(Math.random() * palabras.length)];
-let palabraAdivinada = Array(palabraSecreta.length).fill("_");
-let intentos = 6;
+/* ============================
+   Sonidos — Web Audio (simple)
+   ============================ */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-document.getElementById("palabra").textContent = palabraAdivinada.join(" ");
-
-function adivinar() {
-    const letra = document.getElementById("letra").value.toUpperCase();
-    document.getElementById("letra").value = "";
-
-    if (!letra.match(/[A-ZÑ]/) || letra.length !== 1) {
-        alert("Por favor ingresa una letra válida.");
-        return;
-    }
-
-    if (palabraSecreta.includes(letra)) {
-        for (let i = 0; i < palabraSecreta.length; i++) {
-            if (palabraSecreta[i] === letra) palabraAdivinada[i] = letra;
-        }
-    } else {
-        intentos--;
-        document.getElementById("intentos").textContent = intentos;
-    }
-
-    document.getElementById("palabra").textContent = palabraAdivinada.join(" ");
-
-    if (palabraAdivinada.join("") === palabraSecreta) {
-        document.getElementById("resultadoAhorcado").textContent = "🎉 ¡Ganaste! La palabra era " + palabraSecreta;
-    } else if (intentos === 0) {
-        document.getElementById("resultadoAhorcado").textContent = "❌ Perdiste. La palabra era " + palabraSecreta;
-    }
+function tone(freq, duration=200, type='sine', gain=0.12){
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type;
+  o.frequency.value = freq;
+  g.gain.value = gain;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start();
+  setTimeout(()=>{ o.stop(); }, duration);
 }
 
-// ========================
-// 🎲 Dado de preguntas
-// ========================
-const preguntas = [
-    { pregunta: "¿Qué recurso impreso se usa comúnmente para estudiar?", respuesta: "LIBRO 📖" },
-    { pregunta: "¿Qué tipo de recurso es un video educativo?", respuesta: "RECURSO AUDIOVISUAL 🎥" },
-    { pregunta: "¿Quién es el encargado de guiar el aprendizaje?", respuesta: "EL DOCENTE 👩‍🏫" },
-    { pregunta: "¿Qué herramienta digital permite clases virtuales?", respuesta: "PLATAFORMA 💻" },
-    { pregunta: "¿Quién aprende en el proceso educativo?", respuesta: "EL ESTUDIANTE 👨‍🎓" },
-    { pregunta: "¿Qué elemento impulsa la educación moderna?", respuesta: "LA TECNOLOGÍA ⚙️" }
+/* efectos simples */
+function playSound(name){
+  // resume context on first gesture
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  switch(name){
+    case 'click': tone(1000,80,'sine',0.06); break;
+    case 'error': tone(220,250,'sawtooth',0.14); setTimeout(()=>tone(160,200,'sawtooth',0.12),220); break;
+    case 'win': tone(880,150,'triangle',0.12); setTimeout(()=>tone(1100,200,'triangle',0.12),160); setTimeout(()=>tone(1320,180,'triangle',0.09),340); break;
+    case 'lose': tone(120,200,'square',0.14); setTimeout(()=>tone(90,220,'square',0.12),180); break;
+    case 'dice': tone(600,120,'sine',0.12); break;
+    case 'pop': tone(1200,90,'sine',0.08); break;
+  }
+}
+
+/* ============================
+   Manejo de vistas (menu)
+   ============================ */
+function showGame(id){
+  document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.menu button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + id).classList.add('active');
+}
+
+/* ===============
+   AHORCADO
+   =============== */
+const palabras = ["LIBRO","VIDEO","PLATAFORMA","DOCENTE","APRENDIZAJE","TECNOLOGIA","ESTUDIANTE"];
+let palabraSecreta, intentoArr, intentosRestantes, letrasUsadas;
+const maxFallos = 6;
+
+const canvas = document.getElementById('ahorcadoCanvas');
+const ctx = canvas.getContext('2d');
+
+function startAhorcado(){
+  palabraSecreta = palabras[Math.floor(Math.random()*palabras.length)];
+  intentoArr = Array.from({length: palabraSecreta.length}, ()=>'_');
+  intentosRestantes = maxFallos;
+  letrasUsadas = new Set();
+  document.getElementById('intentos').textContent = intentosRestantes;
+  document.getElementById('palabraArea').textContent = intentoArr.join(' ');
+  document.getElementById('msgAhorcado').textContent = '';
+  buildKeyboard();
+  drawBase();
+  playSound('pop');
+}
+startAhorcado();
+
+/* dibuja la estructura base */
+function drawBase(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#163a3a";
+
+  // ground
+  ctx.beginPath();
+  ctx.moveTo(20,300);
+  ctx.lineTo(280,300);
+  ctx.stroke();
+
+  // poste
+  ctx.beginPath();
+  ctx.moveTo(60,300);
+  ctx.lineTo(60,40);
+  ctx.lineTo(180,40);
+  ctx.lineTo(180,80);
+  ctx.stroke();
+
+  // rope placeholder
+  ctx.beginPath();
+  ctx.moveTo(180,80);
+  ctx.lineTo(180,100);
+  ctx.stroke();
+
+  // draw body parts depending on mistakes
+  const fallos = maxFallos - intentosRestantes;
+  ctx.strokeStyle = "#0b2b2e";
+  ctx.lineWidth = 3;
+
+  if(fallos>=1){ // cabeza
+    ctx.beginPath();
+    ctx.arc(180,120,22,0,Math.PI*2);
+    ctx.stroke();
+  }
+  if(fallos>=2){ // body
+    ctx.beginPath();
+    ctx.moveTo(180,142);
+    ctx.lineTo(180,220);
+    ctx.stroke();
+  }
+  if(fallos>=3){ // left arm
+    ctx.beginPath();
+    ctx.moveTo(180,160);
+    ctx.lineTo(150,190);
+    ctx.stroke();
+  }
+  if(fallos>=4){ // right arm
+    ctx.beginPath();
+    ctx.moveTo(180,160);
+    ctx.lineTo(210,190);
+    ctx.stroke();
+  }
+  if(fallos>=5){ // left leg
+    ctx.beginPath();
+    ctx.moveTo(180,220);
+    ctx.lineTo(150,260);
+    ctx.stroke();
+  }
+  if(fallos>=6){ // right leg
+    ctx.beginPath();
+    ctx.moveTo(180,220);
+    ctx.lineTo(210,260);
+    ctx.stroke();
+
+    // eyes X
+    ctx.strokeStyle = "#b91c1c";
+    ctx.beginPath();
+    ctx.moveTo(172,112); ctx.lineTo(176,118);
+    ctx.moveTo(176,112); ctx.lineTo(172,118);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(186,112); ctx.lineTo(190,118);
+    ctx.moveTo(190,112); ctx.lineTo(186,118);
+    ctx.stroke();
+  }
+}
+
+/* teclado interactivo */
+function buildKeyboard(){
+  const keyboard = document.getElementById('keyboard');
+  keyboard.innerHTML='';
+  const letters = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split('');
+  letters.forEach(l=>{
+    const btn = document.createElement('div');
+    btn.className='key';
+    btn.textContent=l;
+    btn.onclick=()=> tryLetter(l,btn);
+    if(letrasUsadas.has(l)) btn.classList.add('disabled');
+    keyboard.appendChild(btn);
+  });
+}
+
+function tryLetter(letter, btn){
+  if(intentosRestantes<=0) return;
+  if(letrasUsadas.has(letter)) return;
+  letrasUsadas.add(letter);
+  if(btn) btn.classList.add('disabled');
+
+  if(palabraSecreta.includes(letter)){
+    for(let i=0;i<palabraSecreta.length;i++){
+      if(palabraSecreta[i]===letter) intentoArr[i]=letter;
+    }
+    document.getElementById('palabraArea').textContent = intentoArr.join(' ');
+    playSound('pop');
+    // win?
+    if(intentoArr.join('')===palabraSecreta){
+      document.getElementById('msgAhorcado').textContent = '🎉 ¡Ganaste! La palabra es ' + palabraSecreta;
+      playSound('win');
+    }
+  } else {
+    intentosRestantes--;
+    document.getElementById('intentos').textContent = intentosRestantes;
+    playSound('error');
+    drawBase();
+    if(intentosRestantes===0){
+      document.getElementById('msgAhorcado').textContent = '❌ Fin del juego. La palabra era ' + palabraSecreta;
+      playSound('lose');
+    }
+  }
+}
+
+/* permitir ingresar desde teclado físico */
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('ahorcado').classList.contains('hidden')) return;
+  const k = e.key.toUpperCase();
+  if(/^[A-ZÑ]$/.test(k)) {
+    const keys = [...document.querySelectorAll('#keyboard .key')];
+    const btn = keys.find(x=>x.textContent===k);
+    tryLetter(k, btn);
+  }
+});
+
+/* pista (revela una letra) */
+function hintLetter(){
+  if(intentosRestantes<=1) return;
+  // reveal random unrevealed letter
+  const hiddenIdx = [];
+  for(let i=0;i<intentoArr.length;i++) if(intentoArr[i]==='_') hiddenIdx.push(i);
+  if(hiddenIdx.length===0) return;
+  const idx = hiddenIdx[Math.floor(Math.random()*hiddenIdx.length)];
+  const letter = palabraSecreta[idx];
+  // simulate clicking that letter
+  const keys = [...document.querySelectorAll('#keyboard .key')];
+  const btn = keys.find(x=>x.textContent===letter);
+  intentosRestantes--;
+  document.getElementById('intentos').textContent = intentosRestantes;
+  tryLetter(letter, btn);
+}
+
+/* ===============
+   CRUCIGRAMA
+   =============== */
+/* diseño del crucigrama (10x9) - representa filas y columnas; ' ' es celda blanca con input; '#' celda negra */
+const cwLayout = [
+  ['L','I','B','R','O','#','V','I','D','E','O'],
+  ['#','#','A','#','#','#','E','#','#','#','#'],
+  ['T','E','C','N','O','L','O','G','I','A','#'],
+  ['#','#','C','#','A','#','N','#','#','#','#'],
+  ['P','L','A','T','A','F','O','R','M','A','#'],
+  ['#','#','#','#','#','#','#','#','#','#','#'],
+  ['E','S','T','U','D','I','A','N','T','E','#']
 ];
 
-function tirarDado() {
-    const numero = Math.floor(Math.random() * 6) + 1;
-    document.getElementById("imagenDado").src = `https://upload.wikimedia.org/wikipedia/commons/${["1/14/Dice-1-b.svg","5/5f/Dice-2-b.svg","b/b1/Dice-3-b.svg","f/fd/Dice-4-b.svg","0/08/Dice-5-b.svg","2/26/Dice-6-b.svg"][numero-1]}`;
-    
-    const pregunta = preguntas[numero - 1];
-    document.getElementById("pregunta").textContent = pregunta.pregunta;
-    document.getElementById("respuesta").textContent = "👉 " + pregunta.respuesta;
-}
-</script>
+/* Convertimos layout en grid y mapeamos palabras esperadas. */
+const cwRows = cwLayout.length;
+const cwCols = cwLayout[0].length;
 
+const cwGridEl = document.getElementById('cwGrid');
+cwGridEl.style.gridTemplateColumns = `repeat(${cwCols}, auto)`;
+cwGridEl.style.gridAutoRows = 'auto';
+
+let cwCells = []; // guardará referencias
+
+function buildCrossword(){
+  cwGridEl.innerHTML='';
+  cwCells = [];
+  for(let r=0;r<cwRows;r++){
+    for(let c=0;c<cwCols;c++){
+      const val = cwLayout[r][c];
+      const cell = document.createElement('div');
+      cell.className = 'cw-cell';
+      if(val === '#'){
+        cell.classList.add('black');
+        cell.innerHTML='';
+      } else {
+        const input = document.createElement('input');
+        input.maxLength = 1;
+        input.dataset.r = r; input.dataset.c = c;
+        input.addEventListener('input', (e) => {
+          e.target.value = e.target.value.toUpperCase();
+          // auto focus next cell
+          moveFocus(r,c,'next');
+        });
+        input.addEventListener('keydown',(e)=>{
+          if(e.key === 'Backspace' && !e.target.value){
+            moveFocus(r,c,'prev');
+          }
+        });
+        cell.appendChild(input);
+      }
+      cwGridEl.appendChild(cell);
+      cwCells.push({r,c,el:cell});
+    }
+  }
+}
+buildCrossword();
+
+/* mueve foco al siguiente input no-negro en la fila */
+function moveFocus(r,c,dir){
+  let idx;
+  for(let i=0;i<cwCells.length;i++){
+    if(cwCells[i].r===r && cwCells[i].c===c){ idx=i; break; }
+  }
+  if(idx===undefined) return;
+  if(dir==='next'){
+    for(let j=idx+1;j<cwCells.length;j++){
+      if(!cwCells[j].el.classList.contains('black')){
+        const inp = cwCells[j].el.querySelector('input');
+        if(inp){ inp.focus(); break; }
+      }
+    }
+  } else if(dir==='prev'){
+    for(let j=idx-1;j>=0;j--){
+      if(!cwCells[j].el.classList.contains('black')){
+        const inp = cwCells[j].el.querySelector('input');
+        if(inp){ inp.focus(); break; }
+      }
+    }
+  }
+}
+
+/* comprobar crucigrama completo */
+function checkCrossword(){
+  // reconstruir respuesta y comparar con layout
+  let correct=0, total=0;
+  cwCells.forEach(cell=>{
+    if(cell.el.classList.contains('black')) return;
+    const input = cell.el.querySelector('input');
+    total++;
+    const expected = cwLayout[cell.r][cell.c];
+    const val = (input.value || '').toUpperCase();
+    if(val===expected){
+      cell.el.style.background = '#ecfdf5'; // light green
+      input.style.color = 'var(--success)';
+      correct++;
+    } else {
+      cell.el.style.background = '#fff1f2'; // light red
+      input.style.color = 'var(--danger)';
+    }
+  });
+  playSound(correct===total ? 'win' : 'pop');
+  const msg = correct===total ? `🎉 ¡Perfecto! Todas las letras están bien (${correct}/${total}).` : `✅ Letras correctas: ${correct} de ${total}. Corrige las rojas.`;
+  alert(msg);
+}
+
+/* reiniciar crucigrama */
+function resetCrossword(){
+  cwCells.forEach(cell=>{
+    if(cell.el.classList.contains('black')) return;
+    const input = cell.el.querySelector('input');
+    input.value='';
+    cell.el.style.background='';
+    input.style.color='';
+  });
+  playSound('click');
+}
+
+/* =========================
+   DADO CON PREGUNTAS
+   ========================= */
+const diceBox = document.getElementById('diceBox');
+const diceQuestion = document.getElementById('diceQuestion');
+const diceAnswer = document.getElementById('diceAnswer');
+
+const diceQA = [
+  {q:'¿Qué recurso impreso se usa para estudiar?', a:'LIBRO 📖'},
+  {q:'¿Qué recurso audiovisual ayuda a enseñar con imágenes y sonido?', a:'VIDEO 🎥'},
+  {q:'¿Cómo se llama la plataforma virtual para clases?', a:'PLATAFORMA 💻'},
+  {q:'¿Quién guía el aprendizaje en el aula?', a:'DOCENTE 👩‍🏫'},
+  {q:'¿Persona que aprende?', a:'ESTUDIANTE 👨‍🎓'},
+  {q:'Elemento que impulsa la educación moderna?', a:'TECNOLOGÍA ⚙️'}
+];
+
+let diceAnimating = false;
+function playDice(){
+  if(diceAnimating) return;
+  diceAnimating = true;
+  playSound('dice');
+  diceBox.classList.add('spin');
+  // fake animation then set number
+  setTimeout(()=>{
+    const n = Math.floor(Math.random()*6)+1;
+    diceBox.textContent = n;
+    const qa = diceQA[n-1];
+    diceQuestion.textContent = qa.q;
+    diceAnswer.textContent = qa.a;
+    diceBox.classList.remove('spin');
+    diceAnimating = false;
+    playSound('pop');
+  }, 700);
+}
+
+/* iniciar / estado por defecto */
+showGame('ahorcado');
+buildKeyboard();
+drawBase();
+
+/* Exponer algunas funciones para botones */
+window.startAhorcado = startAhorcado;
+window.hintLetter = hintLetter;
+window.resetCrossword = resetCrossword;
+window.checkCrossword = checkCrossword;
+window.playDice = playDice;
+window.playSound = playSound;
+</script>
 </body>
 </html>
+
