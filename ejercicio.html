@@ -3,55 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crucigrama de Recursos Educativos</title>
+<title>Juegos Educativos</title>
 <style>
     body {
         font-family: "Arial", sans-serif;
-        background: #f5f7fa;
+        background: linear-gradient(to bottom right, #f3f8ff, #dcecff);
         text-align: center;
         padding: 30px;
+        color: #333;
     }
 
     h1 {
         color: #007bff;
+        margin-bottom: 20px;
     }
 
-    table {
-        margin: 30px auto;
-        border-collapse: collapse;
+    h2 {
+        margin-top: 40px;
+        color: #0056b3;
     }
 
-    td {
-        width: 40px;
-        height: 40px;
-        text-align: center;
-        vertical-align: middle;
-        border: 1px solid #999;
+    #ahorcado, #dado {
+        margin-top: 20px;
         background: #fff;
-        font-size: 18px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        padding: 20px;
+        width: 90%;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    td input {
-        width: 100%;
-        height: 100%;
-        border: none;
+    #palabra {
+        font-size: 30px;
+        letter-spacing: 10px;
+        margin: 20px 0;
+    }
+
+    input {
+        padding: 10px;
+        font-size: 18px;
+        width: 60px;
         text-align: center;
-        font-size: 18px;
-        text-transform: uppercase;
-    }
-
-    td.black {
-        background: #333;
     }
 
     button {
-        margin-top: 20px;
-        padding: 12px 25px;
+        margin-top: 15px;
+        padding: 10px 25px;
         font-size: 16px;
-        background: #007bff;
-        color: #fff;
         border: none;
         border-radius: 10px;
+        background: #007bff;
+        color: white;
         cursor: pointer;
         transition: background 0.3s;
     }
@@ -60,68 +64,106 @@
         background: #0056b3;
     }
 
-    .clues {
-        margin-top: 40px;
-        text-align: left;
-        width: 80%;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .clues h2 {
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .correct {
-        color: green;
+    #resultadoAhorcado, #pregunta, #respuesta {
+        margin-top: 20px;
         font-weight: bold;
-        margin-top: 10px;
+    }
+
+    #dado img {
+        width: 100px;
+        margin: 15px;
+    }
+
+    #pregunta {
+        font-size: 18px;
+        color: #333;
+        min-height: 50px;
     }
 </style>
 </head>
 <body>
 
-<h1>🧩 Crucigrama: Recursos Educativos</h1>
-<p>Completa el crucigrama con palabras relacionadas con los recursos educativos.</p>
+<h1>🎯 Juegos Educativos</h1>
 
-<table id="crossword">
-    <!-- 10x10 grid -->
-    <tbody>
-        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
-        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td></tr>
-        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
-        <tr><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td></tr>
-        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td></tr>
-        <tr><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td></tr>
-        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td></tr>
-        <tr><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
-        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
-        <tr><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td></tr>
-    </tbody>
-</table>
+<!-- 🧩 Ahorcado -->
+<div id="ahorcado">
+    <h2>Juego del Ahorcado 🪢</h2>
+    <p>Adivina la palabra relacionada con recursos educativos.</p>
+    <div id="palabra"></div>
+    <input type="text" id="letra" maxlength="1" placeholder="Letra">
+    <button onclick="adivinar()">Adivinar</button>
+    <p>Intentos restantes: <span id="intentos">6</span></p>
+    <p id="resultadoAhorcado"></p>
+</div>
 
-<button onclick="verificar()">Verificar</button>
-<p id="resultado" class="correct"></p>
-
-<div class="clues">
-    <h2>🔹 Horizontales</h2>
-    <p>1. Recurso impreso tradicional para el estudio. (LIBRO)</p>
-    <p>2. Material audiovisual para enseñar. (VIDEO)</p>
-    <p>3. Medio virtual de aprendizaje. (PLATAFORMA)</p>
-
-    <h2>🔹 Verticales</h2>
-    <p>1. Persona que enseña. (DOCENTE)</p>
-    <p>2. Persona que aprende. (ESTUDIANTE)</p>
-    <p>3. Uso de computadoras y redes para educar. (TECNOLOGÍA)</p>
+<!-- 🎲 Dado de Preguntas -->
+<div id="dado">
+    <h2>Juego del Dado 🎲</h2>
+    <p>Tira el dado para responder una pregunta sobre educación.</p>
+    <img id="imagenDado" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Dice-1-b.svg" alt="dado">
+    <br>
+    <button onclick="tirarDado()">Tirar Dado</button>
+    <p id="pregunta"></p>
+    <p id="respuesta"></p>
 </div>
 
 <script>
-function verificar() {
-    const respuestas = ["LIBRO", "VIDEO", "PLATAFORMA", "DOCENTE", "ESTUDIANTE", "TECNOLOGIA"];
-    document.getElementById("resultado").textContent =
-        "✅ ¡Excelente! Has completado el crucigrama correctamente (si escribiste las palabras bien en el tablero).";
+// ========================
+// 🎮 Ahorcado
+// ========================
+const palabras = ["LIBRO", "VIDEO", "PLATAFORMA", "DOCENTE", "APRENDIZAJE", "TECNOLOGIA"];
+let palabraSecreta = palabras[Math.floor(Math.random() * palabras.length)];
+let palabraAdivinada = Array(palabraSecreta.length).fill("_");
+let intentos = 6;
+
+document.getElementById("palabra").textContent = palabraAdivinada.join(" ");
+
+function adivinar() {
+    const letra = document.getElementById("letra").value.toUpperCase();
+    document.getElementById("letra").value = "";
+
+    if (!letra.match(/[A-ZÑ]/) || letra.length !== 1) {
+        alert("Por favor ingresa una letra válida.");
+        return;
+    }
+
+    if (palabraSecreta.includes(letra)) {
+        for (let i = 0; i < palabraSecreta.length; i++) {
+            if (palabraSecreta[i] === letra) palabraAdivinada[i] = letra;
+        }
+    } else {
+        intentos--;
+        document.getElementById("intentos").textContent = intentos;
+    }
+
+    document.getElementById("palabra").textContent = palabraAdivinada.join(" ");
+
+    if (palabraAdivinada.join("") === palabraSecreta) {
+        document.getElementById("resultadoAhorcado").textContent = "🎉 ¡Ganaste! La palabra era " + palabraSecreta;
+    } else if (intentos === 0) {
+        document.getElementById("resultadoAhorcado").textContent = "❌ Perdiste. La palabra era " + palabraSecreta;
+    }
+}
+
+// ========================
+// 🎲 Dado de preguntas
+// ========================
+const preguntas = [
+    { pregunta: "¿Qué recurso impreso se usa comúnmente para estudiar?", respuesta: "LIBRO 📖" },
+    { pregunta: "¿Qué tipo de recurso es un video educativo?", respuesta: "RECURSO AUDIOVISUAL 🎥" },
+    { pregunta: "¿Quién es el encargado de guiar el aprendizaje?", respuesta: "EL DOCENTE 👩‍🏫" },
+    { pregunta: "¿Qué herramienta digital permite clases virtuales?", respuesta: "PLATAFORMA 💻" },
+    { pregunta: "¿Quién aprende en el proceso educativo?", respuesta: "EL ESTUDIANTE 👨‍🎓" },
+    { pregunta: "¿Qué elemento impulsa la educación moderna?", respuesta: "LA TECNOLOGÍA ⚙️" }
+];
+
+function tirarDado() {
+    const numero = Math.floor(Math.random() * 6) + 1;
+    document.getElementById("imagenDado").src = `https://upload.wikimedia.org/wikipedia/commons/${["1/14/Dice-1-b.svg","5/5f/Dice-2-b.svg","b/b1/Dice-3-b.svg","f/fd/Dice-4-b.svg","0/08/Dice-5-b.svg","2/26/Dice-6-b.svg"][numero-1]}`;
+    
+    const pregunta = preguntas[numero - 1];
+    document.getElementById("pregunta").textContent = pregunta.pregunta;
+    document.getElementById("respuesta").textContent = "👉 " + pregunta.respuesta;
 }
 </script>
 
