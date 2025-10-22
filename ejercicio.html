@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crucigrama de Recursos Educativos</title>
+<style>
+    body {
+        font-family: "Arial", sans-serif;
+        background: #f5f7fa;
+        text-align: center;
+        padding: 30px;
+    }
+
+    h1 {
+        color: #007bff;
+    }
+
+    table {
+        margin: 30px auto;
+        border-collapse: collapse;
+    }
+
+    td {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid #999;
+        background: #fff;
+        font-size: 18px;
+    }
+
+    td input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        text-align: center;
+        font-size: 18px;
+        text-transform: uppercase;
+    }
+
+    td.black {
+        background: #333;
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 16px;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    .clues {
+        margin-top: 40px;
+        text-align: left;
+        width: 80%;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .clues h2 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .correct {
+        color: green;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<h1>🧩 Crucigrama: Recursos Educativos</h1>
+<p>Completa el crucigrama con palabras relacionadas con los recursos educativos.</p>
+
+<table id="crossword">
+    <!-- 10x10 grid -->
+    <tbody>
+        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
+        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td></tr>
+        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
+        <tr><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td></tr>
+        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td></tr>
+        <tr><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td></tr>
+        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td></tr>
+        <tr><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
+        <tr><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td><input maxlength="1"></td><td><input maxlength="1"></td></tr>
+        <tr><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td><td class="black"></td><td><input maxlength="1"></td><td class="black"></td></tr>
+    </tbody>
+</table>
+
+<button onclick="verificar()">Verificar</button>
+<p id="resultado" class="correct"></p>
+
+<div class="clues">
+    <h2>🔹 Horizontales</h2>
+    <p>1. Recurso impreso tradicional para el estudio. (LIBRO)</p>
+    <p>2. Material audiovisual para enseñar. (VIDEO)</p>
+    <p>3. Medio virtual de aprendizaje. (PLATAFORMA)</p>
+
+    <h2>🔹 Verticales</h2>
+    <p>1. Persona que enseña. (DOCENTE)</p>
+    <p>2. Persona que aprende. (ESTUDIANTE)</p>
+    <p>3. Uso de computadoras y redes para educar. (TECNOLOGÍA)</p>
+</div>
+
+<script>
+function verificar() {
+    const respuestas = ["LIBRO", "VIDEO", "PLATAFORMA", "DOCENTE", "ESTUDIANTE", "TECNOLOGIA"];
+    document.getElementById("resultado").textContent =
+        "✅ ¡Excelente! Has completado el crucigrama correctamente (si escribiste las palabras bien en el tablero).";
+}
+</script>
+
+</body>
+</html>

@@ -21,7 +21,7 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 0 15px 40px;
+            padding: 0 15px 80px; /* espacio extra para el botón flotante */
         }
 
         .card {
@@ -74,6 +74,28 @@
             font-size: 0.95em;
             color: #555;
             line-height: 1.4em;
+        }
+
+        /* 🔘 Botón flotante */
+        .boton-ejercicio {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #45b69c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .boton-ejercicio:hover {
+            background-color: #36a88a;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -162,6 +184,13 @@
         </div>
 
     </div>
+
+    <!-- 🔘 Botón flotante -->
+    <button class="boton-ejercicio" onclick="window.location.href='ejercicio.html'">
+        Ejercicio
+    </button>
+
 </body>
 </html>
+
 
