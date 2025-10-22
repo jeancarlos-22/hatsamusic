@@ -26,7 +26,7 @@
 
         .card {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             background: #fff;
             margin-bottom: 15px;
             border-radius: 10px;
@@ -35,6 +35,7 @@
             text-decoration: none;
             color: #333;
             transition: transform 0.2s ease;
+            padding: 10px;
         }
 
         .card:hover {
@@ -47,6 +48,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            border-radius: 8px;
+            flex-shrink: 0;
         }
 
         .icon img {
@@ -57,69 +60,108 @@
 
         .text {
             flex: 1;
-            padding: 15px;
+            padding: 0 15px;
+        }
+
+        .text h2 {
+            margin: 0;
             font-size: 1.1em;
+            color: #333;
+        }
+
+        .text p {
+            margin: 5px 0 0;
+            font-size: 0.95em;
+            color: #555;
+            line-height: 1.4em;
         }
     </style>
 </head>
 <body>
     <h1>Recursos educativos</h1>
     <div class="container">
-        <a href="#" class="card">
-            <div class="icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
-            </div>
-            <div class="text">¿Qué es un adjetivo?</div>
-        </a>
 
-        <a href="#" class="card">
+        <div class="card">
             <div class="icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
             </div>
-            <div class="text">¿Qué es un sustantivo?</div>
-        </a>
+            <div class="text">
+                <h2>¿Qué es un adjetivo?</h2>
+                <p>Es una palabra que describe o califica a un sustantivo. Indica cualidades, estados o características de personas, animales o cosas.</p>
+            </div>
+        </div>
 
-        <a href="#" class="card">
+        <div class="card">
             <div class="icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
             </div>
-            <div class="text">¿Qué es un adverbio?</div>
-        </a>
+            <div class="text">
+                <h2>¿Qué es un sustantivo?</h2>
+                <p>Es una palabra que nombra a una persona, animal, lugar, cosa o idea. Por ejemplo: casa, perro, amistad, María.</p>
+            </div>
+        </div>
 
-        <a href="#" class="card">
+        <div class="card">
             <div class="icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
             </div>
-            <div class="text">¿Qué es un verbo?</div>
-        </a>
+            <div class="text">
+                <h2>¿Qué es un adverbio?</h2>
+                <p>Es una palabra que modifica a un verbo, un adjetivo o a otro adverbio. Indica modo, tiempo, lugar o cantidad.</p>
+            </div>
+        </div>
 
-        <a href="#" class="card">
+        <div class="card">
             <div class="icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
             </div>
-            <div class="text">Verbos en infinitivo</div>
-        </a>
+            <div class="text">
+                <h2>¿Qué es un verbo?</h2>
+                <p>Es la palabra que expresa una acción, estado o proceso. Ejemplo: correr, pensar, vivir, estar.</p>
+            </div>
+        </div>
 
-        <a href="#" class="card">
+        <div class="card">
             <div class="icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
             </div>
-            <div class="text">La propiedad conmutativa</div>
-        </a>
+            <div class="text">
+                <h2>Verbos en infinitivo</h2>
+                <p>Son los verbos en su forma básica, sin conjugar. Terminan en -ar, -er o -ir, como cantar, comer o vivir.</p>
+            </div>
+        </div>
 
-        <a href="#" class="card">
+        <div class="card">
             <div class="icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
             </div>
-            <div class="text">La propiedad distributiva</div>
-        </a>
+            <div class="text">
+                <h2>Propiedad conmutativa</h2>
+                <p>Establece que el orden de los factores no altera el resultado. Ejemplo: 3 + 5 = 5 + 3.</p>
+            </div>
+        </div>
 
-        <a href="#" class="card">
+        <div class="card">
             <div class="icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
             </div>
-            <div class="text">La propiedad asociativa</div>
-        </a>
+            <div class="text">
+                <h2>Propiedad distributiva</h2>
+                <p>Permite multiplicar un número por una suma o resta. Ejemplo: 2 × (3 + 4) = (2×3) + (2×4).</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="icono">
+            </div>
+            <div class="text">
+                <h2>Propiedad asociativa</h2>
+                <p>Indica que la forma de agrupar los números no cambia el resultado. Ejemplo: (2 + 3) + 4 = 2 + (3 + 4).</p>
+            </div>
+        </div>
+
     </div>
 </body>
 </html>
+
