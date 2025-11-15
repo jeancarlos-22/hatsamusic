@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Juego 2 Jugadores - Preguntas Humanidades</title>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+
+
 <style>
   body{margin:0;background:linear-gradient(#111827,#071029);font-family:Inter,system-ui,Arial;color:#e6eef8}
   #gameContainer{display:flex;justify-content:center;padding:18px}
@@ -40,6 +42,7 @@
   footer{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;color:#9fb4d8;font-size:13px}
 </style>
 </head>
+
 <body>
   <div id="closeInfo" class="small">Jugador1: Flechas; Jugador2: W/A/D (W saltar)</div>
   <div class="hud" aria-hidden="false">
@@ -61,6 +64,7 @@
       <div class="small">Respuesta correcta: <span id="qm_feedback" style="font-weight:800"></span></div>
       <button id="qm_close" style="background:#c0c5cc;border:none;padding:8px 12px;border-radius:8px;color:white;cursor:pointer">Continuar</button>
     </div>
+    
   </div>
 
   <footer>Bonificación: +10 pts correcto — -5 pts incorrecto. Preguntas: Humanidades / Español — múltiples opciones.</footer>
@@ -463,6 +467,11 @@ window.addEventListener('keydown', (e) => {
 });
 
 </script>
+
+<div style="margin-top:18px; text-align:center;">
+  <button onclick="window.location.href='index.html'" class="btn-ghost">⬅ Volver al inicio</button>
+</div>
+
 </body>
 </html>
 
