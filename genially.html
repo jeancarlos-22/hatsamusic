@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Genially incrustado — Juego interactivo</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;background:linear-gradient(180deg,var(--bg),#030612);color:#e6eef8;min-height:100vh;}
+    .wrap{width:100%;max-width:none;margin:0;padding:0;}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(6,182,212,0.12);font-weight:700}
+    h1{font-size:1.15rem;margin:0}
+    p.lead{margin:4px 0 0;color:#9fb6c6}
+
+    .card{background:linear-gradient(180deg,var(--card), #061021);border-radius:14px;padding:18px;box-shadow:0 10px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+    /* responsive iframe container (16:9) */
+    .genially-wrap{position:relative;width:100%;height:100vh;padding-top:0;border-radius:0;overflow:hidden;background:var(--glass);}
+    .genially-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+
+    .controls{display:flex;gap:8px;margin-top:12px}
+    .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);color:inherit;padding:8px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+    .btn:hover{transform:translateY(-2px)}
+    .muted{color:#94a8b8;font-size:0.9rem;margin-top:10px}
+
+    @media (max-width:640px){
+      body{padding:18px}
+      header{gap:12px}
+      .logo{width:48px;height:48px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">G</div>
+      <div>
+        <h1>Genially incrustado</h1>
+        <p class="lead">Interactúa con el contenido directamente aquí. Si lo prefieres, ábrelo en una pestaña nueva.</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="genially-wrap" id="geniallyContainer">
+        <!-- Genially incrustado -->
+        <iframe id="geniallyFrame" src="https://view.genially.com/68cc96a3564a4e8d8e891416/interactive-content-gamificacion" title="Genially interactivo" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="openNew">Abrir en nueva pestaña</button>
+        <button class="btn" id="goFullscreen">Pantalla completa</button>
+      </div>
+
+      <p class="muted">Si el contenido no carga, <a id="fallbackLink" href="https://view.genially.com/68cc96a3564a4e8d8e891416/interactive-content-gamificacion" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">ábrelo directamente en Genially</a>.</p>
+    </div>
+  </div>
+
+  <script>
+    const frame = document.getElementById('geniallyFrame');
+    const openNew = document.getElementById('openNew');
+    const goFullscreen = document.getElementById('goFullscreen');
+    const fallbackLink = document.getElementById('fallbackLink');
+    const embedUrl = 'https://view.genially.com/68cc96a3564a4e8d8e891416/interactive-content-gamificacion';
+
+    openNew.addEventListener('click', ()=>{
+      window.open(embedUrl, '_blank', 'noopener');
+    });
+
+    goFullscreen.addEventListener('click', async ()=>{
+      try{
+        if (frame.requestFullscreen) await frame.requestFullscreen();
+        else if (frame.webkitRequestFullscreen) await frame.webkitRequestFullscreen();
+        else alert('Pantalla completa no soportada en este navegador.');
+      }catch(e){
+        alert('No se pudo activar pantalla completa.');
+      }
+    });
+
+    // Si quieres forzar un aspecto diferente, cambia padding-top (ej. 75% para 4:3)
+    // Puedes personalizar más: colores, textos, agregar descripción o botones extra.
+  </script>
+  
+</body>
+<div style="position:fixed;bottom:20px;right:20px;z-index:9999;">
+  <button class="btn" onclick="history.back()" style="padding:12px 22px;border-radius:10px;cursor:pointer;">⬅ Volver atrás</button>
+</div>
+</html>
